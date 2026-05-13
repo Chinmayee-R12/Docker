@@ -17,17 +17,23 @@ pipeline {
         }
       }
     }
-    stage('login and push') {
-      steps {
-        withCredentials([usernamePassword (
-          credentialsId : "${DOCKERHUB_CREDENTIALS}",
-          passwordVariable : 'PASS',
-          usernameVariable : 'USER'
-          )]){
-        sh "echo $PASS | docker login -u $USER --password-stdin"
-        sh "docker push ${APP_NAME}:${BUILD_NUMBER}"
+    stage('Login and Push') {
+    steps {
+        withCredentials([usernamePassword(
+            credentialsId: "${DOCKERHUB_CREDENTIALS}",
+            usernameVariable: 'USER',
+            passwordVariable: 'PASS'
+        )]) {
+
+            sh '''
+                echo $PASS | docker login -u $USER --password-stdin
+                docker push chinmayeer12/flask-app:${BUILD_NUMBER}
+            '''
         }
-      }
     }
+}
+        
+      
+    
   }
 }
